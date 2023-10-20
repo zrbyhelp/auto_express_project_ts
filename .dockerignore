@@ -1,0 +1,9 @@
+Dockerfile
+
+.git
+.gitignore
+.config
+
+.npm
+app/.vscode
+node_modules

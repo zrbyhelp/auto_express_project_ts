@@ -1,0 +1,29 @@
+{
+  "name": "auto_express_project_ts",
+  "version": "1.0.0",
+  "description": "通用express项目框架ts版本",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "npm run build && node build/index.js",
+    "build": "rimraf build && tsc && cp -r src/public build"
+  },
+  "author": "zr",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express-winston": "^4.0.0",
+    "@types/js-yaml": "^4.0.8",
+    "@types/winston": "^2.4.4",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "js-yaml": "^4.1.0",
+    "winston": "^3.11.0",
+    "yaml": "^2.3.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.20",
+    "nodemon": "^3.0.1",
+    "rimraf": "^5.0.1",
+    "typescript": "^5.2.2"
+  }
+}
