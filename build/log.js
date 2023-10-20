@@ -15,6 +15,8 @@ exports.logger = winston_1.default.createLogger({
         new winston_1.default.transports.File({
             filename: 'logs/info/' + new Date().toISOString().split('T')[0] + '.log',
             level: 'info',
+            maxFiles: 14,
+            tailable: true, // 启用循环日志
         }),
     ],
 });

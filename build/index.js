@@ -14,7 +14,6 @@ const log_1 = require("./log");
 const app = (0, express_1.default)();
 //读取配置文件,具体设置查阅配置文件
 const configFilePath = path_1.default.join(__dirname, './public/config.yaml');
-console.log(configFilePath);
 const fileContents = fs_1.default.readFileSync(configFilePath, 'utf8');
 const config = yaml_1.default.parse(fileContents);
 //设置端口
