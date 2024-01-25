@@ -23,4 +23,4 @@ COPY --chown=node:node  build $WORKDIR/build
 LABEL version="1.1"
 
 # 应用程序启动命令
-CMD node build/index.js
+CMD NODE_ENV=production  node build/index.js
