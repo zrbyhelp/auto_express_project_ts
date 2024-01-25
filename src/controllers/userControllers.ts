@@ -10,7 +10,13 @@ export class UserController {
    */
   async initCreateAdminUser(): Promise<void> {
     if(await this.userService.getCount()===0){
-        this.userService.createUser( 'admin','123456');
+      await this.userService.createUser( 'admin','123456');
     }
+  }
+  /**
+   * 获取全部用户
+   */
+  async userCount(): Promise<number> {
+     return await this.userService.getCount();
   }
 }

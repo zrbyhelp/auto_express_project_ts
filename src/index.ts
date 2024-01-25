@@ -7,16 +7,18 @@ import  expressWinston,{logger,errorLog}  from './log';
 import router from "./router";
 import { versions } from "./version";
 import config from './config';
-import { initTableData, sequelize } from "./config/database";
-import { User } from "./models/user";
-import { UserController } from "./controllers/userControllers";
+import { sequelize } from "./config/database";
 
 //清理控制台多余提醒
 console.clear();
 console.log("===程序输出=================================================");
 
 //同步数据库
-initTableData();
+sequelize.sync({alter: true})
+.catch((error) => {
+    errorLog.info(error.message);
+    throw new Error("数据库同步失败");
+});
 
 const app = express();
 

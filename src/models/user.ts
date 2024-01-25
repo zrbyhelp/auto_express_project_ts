@@ -1,6 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
 import crypto from 'crypto';
+import { UserController } from "../controllers/userControllers";
 export class User extends Model {
     //生成加盐sha256密码
     createPassword(value:string){
@@ -46,3 +47,7 @@ User.init({
   }, {
     sequelize
 });
+ User.sync({ alter: true }).then(()=>{
+  new UserController().initCreateAdminUser()
+ })
+
