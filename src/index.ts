@@ -14,8 +14,7 @@ console.clear();
 console.log("===程序输出=================================================");
 
 //同步数据库
-sequelize.sync({alter: true})
-.catch((error) => {
+sequelize.sync({alter: true}).catch((error) => {
     errorLog.info(error.message);
     throw new Error("数据库同步失败");
 });
