@@ -2,10 +2,11 @@ import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
 import crypto from 'crypto';
 import { UserController } from "../controllers/userControllers";
+import { ZrError } from "../zrError";
 export class User extends Model {
     //生成加盐sha256密码
     createPassword(value:string){
-        if(value.length>32||value.length<6)throw new Error("密码长度过短");
+        if(value.length>32||value.length<6)throw new ZrError("密码长度过短");
         return crypto.createHash('sha256').update(this.getDataValue('name') + value).digest('hex');
     }
     /**

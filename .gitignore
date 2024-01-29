@@ -3,3 +3,6 @@
 /.idea/
 /logs/
 /build/
+
+# Sentry Config File
+.sentryclirc

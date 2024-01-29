@@ -10,7 +10,8 @@ const configJson:ConfigJson = {
         logging: false
       },
       port:3000,
-      name:"api-test"
+      name:"api-test",
+      sentryDsn:"https://eefe502c29559c7ad85b8feb0e51ff5c@o4504376998363136.ingest.sentry.io/4506636094013440"
     },
     production: {
       database: {
@@ -23,7 +24,8 @@ const configJson:ConfigJson = {
         logging: false
       },
       port:13000,
-      name:"api"
+      name:"api",
+      sentryDsn:"https://eefe502c29559c7ad85b8feb0e51ff5c@o4504376998363136.ingest.sentry.io/4506636094013440"
     }
   }
 
@@ -31,7 +33,8 @@ const configJson:ConfigJson = {
   interface EnvironmentConfig {
     database: Options;
     port: number;
-    name:string
+    name:string;
+    sentryDsn:string;
   }
   
   interface ConfigJson {
