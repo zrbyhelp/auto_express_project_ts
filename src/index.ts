@@ -10,6 +10,8 @@ import config from './config';
 import { sequelize } from "./config/database";
 import  expressWinston from './log';
 import {  ZrError, errorUse } from "./zrError";
+import { WebSocketServer } from "./web-socket";
+import http from 'http';
 
 //清理控制台多余提醒
 console.clear();
@@ -58,7 +60,8 @@ app.use(Sentry.Handlers.tracingHandler());
 
 //记录日志
 app.use(expressWinston());
-
+//注册WebSocket
+WebSocketServer.getInstance(app);
 //版本控制中间件
 app.use(`/${config.name}/:version`, (req, res, next) => {
   const v = req.params.version;

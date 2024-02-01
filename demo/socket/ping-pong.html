@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let socket;
+
+        function connectWebSocket() {
+            socket = new WebSocket('ws://localhost:3000/ws')
+
+            socket.addEventListener('open', () => {
+                console.log('WebSocket connection opened');
+            });
+
+            socket.addEventListener('message', (event) => {
+                const message = JSON.parse(event.data);
+                handleMessage(message);
+            });
+
+            socket.addEventListener('close', () => {
+                console.log('WebSocket connection closed');
+                reconnectWebSocket(); // 在关闭后尝试重新连接
+            });
+
+            socket.addEventListener('error', (event) => {
+                console.error('WebSocket error:', event);
+            });
+        }
+
+        function reconnectWebSocket() {
+            setTimeout(() => {
+                console.log('Reconnecting...');
+                connectWebSocket();
+            }, 1000); // 5秒后重新连接
+        }
+
+        function sendPing() {
+            socket.send(JSON.stringify({ type: 'Ping' }));
+        }
+
+        function handleMessage(message) {
+            switch (message.type) {
+                case 'Pong':
+                console.log('Received Pong message from server.');
+                break;
+                case 'chat':
+                console.log('Received chat message from server:', message.message);
+                break;
+                default:
+                console.log('Received invalid message from server:', message);
+            }
+        }
+
+        connectWebSocket()
+      
+    </script>
+</body>
+</html>
