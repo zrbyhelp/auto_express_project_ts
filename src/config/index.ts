@@ -1,3 +1,5 @@
+
+
 const configJson:ConfigJson = {
     development: {
       database: {
@@ -26,7 +28,8 @@ const configJson:ConfigJson = {
       port:13000,
       name:"api",
       sentryDsn:"https://eefe502c29559c7ad85b8feb0e51ff5c@o4504376998363136.ingest.sentry.io/4506636094013440"
-    }
+    },
+    type:"service"
   }
 
   import { Options } from "sequelize";
@@ -40,6 +43,8 @@ const configJson:ConfigJson = {
   interface ConfigJson {
     development: EnvironmentConfig;
     production: EnvironmentConfig;
+    //表示模块功能类型
+    type:string;
   }
 const environment = process.env.NODE_ENV || 'development';
 export default environment==='development' ? configJson.development:configJson.production;

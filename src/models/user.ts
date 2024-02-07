@@ -7,7 +7,7 @@ export class User extends Model {
     //生成加盐sha256密码
     createPassword(value:string){
         if(value.length>32||value.length<6)throw new ZrError("密码长度过短");
-        return crypto.createHash('sha256').update(this.getDataValue('name') + value).digest('hex');
+        return crypto.createHash('sha256').update(this.getDataValue('id') + value).digest('hex');
     }
     /**
      * 验证密码有效性
@@ -22,11 +22,11 @@ User.init({
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
-      primaryKey:true
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey:true,
       validate: {
         isAlphanumeric:{
             msg:"只允许字母或数字"

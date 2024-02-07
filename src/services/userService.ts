@@ -11,7 +11,10 @@ class UserService{
         const user = await User.create({ name, password });
         return user;
     }
-    
+    async findByName(name:string): Promise<User|null> {
+        const user = await User.findOne({where:{name}});
+        return user;
+    }
     /**
      * 获取当前用户数量
      * @returns 用户数

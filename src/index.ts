@@ -57,11 +57,25 @@ Sentry.init({
 app.use(Sentry.Handlers.requestHandler());
 //TracingHandler为每个传入请求创建跟踪
 app.use(Sentry.Handlers.tracingHandler());
-
+//初始化json
+app.use(express.json());
 //记录日志
 app.use(expressWinston());
 //注册WebSocket
 WebSocketServer.getInstance(app);
+
+
+// 使用中间件，只允许白名单中的域名访问
+app.use((req, res, next) => {
+  const requestDomain = req.get('host');
+  console.log(requestDomain,req.protocol)
+  next();
+});
+
+
+
+
+
 //版本控制中间件
 app.use(`/${config.name}/:version`, (req, res, next) => {
   const v = req.params.version;
