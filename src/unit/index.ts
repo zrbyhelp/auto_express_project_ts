@@ -5,13 +5,15 @@ import fs  from 'fs';
 import path from "path";
 import jwt from "jsonwebtoken";
 import express, { NextFunction ,Request ,Response} from "express";
+import { ServiceWhitelistControllers } from "../controllers/serviceWhitelistControllers";
+import { logger } from "../log";
 export class UnitCommon {
     static ThrowIfNullOrEmpty(errorMessage: string):never {
         throw new ZrError(errorMessage);
   }
   static readFromFile(filePath:string) {
-    const file = fs.readFileSync(filePath, 'utf-8');
-    return Buffer.from(file, 'base64');
+    return fs.readFileSync(filePath, 'utf-8');
+    
   };
 }
 export class Jwt{
@@ -36,7 +38,56 @@ export class Jwt{
   }
 }
 export class KeyCommon {
-
+    //证书验证
+  static async authenticate(req:Request, res:Response, next:NextFunction){
+      let host = req.socket.remoteAddress;
+      if (host?.substring(0, 7) == "::ffff:") {
+        host = host.substring(7);
+      }
+      console.log(host)
+      const keyName =await new ServiceWhitelistControllers().getKey(host);
+      if(!keyName){
+        return res.status(401).json();
+      }
+      let key;
+      try {
+         key = UnitCommon.readFromFile(path.join(KeyCommon.keyFile,`${keyName}.pem`))
+      } catch (error) {
+        throw new ZrError("证书丢失");
+      }
+      let body;
+      if (req.method === 'GET') {
+          body = req.query;
+      } else if (req.method === 'POST') {
+          body = req.body;
+      } 
+      const encryptedData = body.encryptedData;
+      const v = body.v;
+      const k = body.k;
+      if(!encryptedData||!v||!k){
+        return res.status(401).json();
+      }
+      const backData = KeyCommon.serviceDecrypt({encryptedData,v,k},key)
+      req.app.set("iv",v);
+      req.app.set("asekey",backData.asekey);
+      if (req.method === 'GET') {
+          req.query =JSON.parse(backData.data);
+      } else if (req.method === 'POST') {
+          req.body = JSON.parse(backData.data);
+      } 
+   
+      logger.info(`========================================================================= 
+客户端：${host} 
+访问地址：${req.protocol}://${req.headers.host}${req.originalUrl} 
+数据：${backData.data} 
+========================================================================================================= 
+      `);
+      next();
+  }
+  //服务器返回数据
+  static serviceSend(data:object,req:Request, res:Response){
+    res.send(KeyCommon.serviceCrypt(JSON.stringify(data),req.app.get("asekey"),req.app.get("iv")))
+  }
   static get keyFile():string{
     const keyDirectory = path.join(__dirname, '../key');
     if (!fs.existsSync(keyDirectory)) {
@@ -46,17 +97,17 @@ export class KeyCommon {
   }
   // 使用RSA公钥加密
   static rsaEncrypt(data:string,publicKey:string) {
-    return crypto.publicEncrypt(publicKey, Buffer.from(data)).toString('base64');
+    return crypto.publicEncrypt({ key: publicKey, padding: crypto.constants.RSA_PKCS1_PADDING }, Buffer.from(data)).toString('base64');
   }
 
   // 使用RSA私钥解密
   static rsaDecrypt(data:string,privateKey:string) {
-    return crypto.privateDecrypt(privateKey, Buffer.from(data, 'base64')).toString('utf-8');
+    return crypto.privateDecrypt({ key: privateKey, padding: crypto.constants.RSA_PKCS1_PADDING }, Buffer.from(data, 'base64')).toString('utf-8');
   }
   // 使用AES加密
-  static aesEncrypt(data:string, key:string) {
-    const iv = crypto.randomBytes(16); // 生成随机的初始向量
+  static aesEncrypt(data:string, key:string,iv:Buffer=crypto.randomBytes(16)) {
     const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key, 'base64'), iv);
+
     let encrypted = cipher.update(data, 'utf-8', 'base64');
     encrypted += cipher.final('base64');
     return { encryptedData: encrypted, iv: iv.toString('base64') };
@@ -94,6 +145,8 @@ export class KeyCommon {
     const key = UnitCommon.readFromFile(keyFile);
     return key;
   }
+
+
   /**
    * 客服端加密传输数据
    * @param publicKey 公钥
@@ -101,8 +154,8 @@ export class KeyCommon {
    * @param aesKey 随机生成的key
    * @returns 
    */
-  static clientCrypt(publicKey:string,data:string,aesKey:string):CryptData{
-    const { encryptedData, iv } = KeyCommon.aesEncrypt(data, aesKey);
+  static clientCrypt(publicKey:string,data:object,aesKey:string):CryptData{
+    const { encryptedData, iv } = KeyCommon.aesEncrypt(JSON.stringify(data), aesKey);
     const encryptedWithRSA = KeyCommon.rsaEncrypt(aesKey,publicKey);
     return { encryptedData: encryptedData, v: iv, k: encryptedWithRSA };
   }
@@ -130,18 +183,18 @@ export class KeyCommon {
    * @returns 
    */
   static serviceCrypt(data:string,asekey:string,iv:string){
-    const encryptedData = KeyCommon.aesDecrypt(data,asekey,iv);
+    const encryptedData = KeyCommon.aesEncrypt(data,asekey,Buffer.from(iv, 'base64'));
     return encryptedData;
   }
   /**
    * 服务器解密传入数据
    * @param cryptData 传入的数据
-   * @param primaryKey 服务器私钥
+   * @param privateKey 服务器私钥
    * @returns 
    */
-  static serviceDecrypt(cryptData:CryptData,primaryKey:string){
+  static serviceDecrypt(cryptData:CryptData,privateKey:string){
     try{
-      const asekey = KeyCommon.rsaDecrypt(cryptData.k,primaryKey);
+      const asekey = KeyCommon.rsaDecrypt(cryptData.k,privateKey);
       const data = KeyCommon.aesDecrypt(cryptData.encryptedData,asekey,cryptData.v);
       return {data,asekey};
     }catch{

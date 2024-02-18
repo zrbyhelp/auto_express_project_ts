@@ -6,7 +6,7 @@
   "scripts": {
     "dev": " nodemon",
     "start": "npm run build &&NODE_ENV=production node  build/index.js",
-    "build": "rimraf build && tsc &&cp -r src/config/private_key.pem build/config&& npm run sentry:sourcemaps",
+    "build": "rimraf build && tsc && npm run sentry:sourcemaps",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org miopos --project node ./build && sentry-cli sourcemaps upload --org miopos --project node ./build"
   },
   "author": "zr",

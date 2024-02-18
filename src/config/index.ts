@@ -6,7 +6,7 @@ const configJson:ConfigJson = {
         username: "root",
         password: "MC+ywLivM4wg22k8GR6Niw==",
         database: "nodesever",
-        host: "127.0.0.1",
+        host: "192.168.1.90",
         dialect : "mysql",
         port:3306,
         logging: false
@@ -20,12 +20,12 @@ const configJson:ConfigJson = {
         username: "root",
         password: "MC+ywLivM4wg22k8GR6Niw==",
         database: "nodesever",
-        host: "127.0.0.1",
+        host: "192.168.1.90",
         dialect : "mysql",
         port:3306,
         logging: false
       },
-      port:13000,
+      port:process.env.PORT || 13000,
       name:"api",
       sentryDsn:"https://eefe502c29559c7ad85b8feb0e51ff5c@o4504376998363136.ingest.sentry.io/4506636094013440"
     },
@@ -35,7 +35,7 @@ const configJson:ConfigJson = {
   import { Options } from "sequelize";
   interface EnvironmentConfig {
     database: Options;
-    port: number;
+    port: number|string;
     name:string;
     sentryDsn:string;
   }

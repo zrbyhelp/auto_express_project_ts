@@ -12,8 +12,8 @@ const logDir = 'logs/info';
 if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir, { recursive: true });
 }
-const logFormat = winston.format.printf(({ timestamp, level, message }) => {
-    return `${timestamp} ${level}: ${message}`;
+const logFormat = winston.format.printf(({ timestamp, level, message ,host}) => {
+    return `${timestamp} ${level} : ${message}`;
   });
 export const logger = winston.createLogger({
     level: 'info',

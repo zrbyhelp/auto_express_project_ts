@@ -11,7 +11,6 @@ import { sequelize } from "./config/database";
 import  expressWinston from './log';
 import {  ZrError, errorUse } from "./zrError";
 import { WebSocketServer } from "./web-socket";
-import http from 'http';
 
 //清理控制台多余提醒
 console.clear();
@@ -53,28 +52,15 @@ Sentry.init({
   tracesSampleRate: 1.0, 
   profilesSampleRate: 1.0,
 });
+
 //请求处理程序必须是应用程序上的第一个中间件
 app.use(Sentry.Handlers.requestHandler());
 //TracingHandler为每个传入请求创建跟踪
 app.use(Sentry.Handlers.tracingHandler());
 //初始化json
 app.use(express.json());
-//记录日志
-app.use(expressWinston());
 //注册WebSocket
 WebSocketServer.getInstance(app);
-
-
-// 使用中间件，只允许白名单中的域名访问
-app.use((req, res, next) => {
-  const requestDomain = req.get('host');
-  console.log(requestDomain,req.protocol)
-  next();
-});
-
-
-
-
 
 //版本控制中间件
 app.use(`/${config.name}/:version`, (req, res, next) => {
@@ -86,6 +72,7 @@ app.use(`/${config.name}/:version`, (req, res, next) => {
   app.set("v",foundVersion);
   next();
 });
+
 //路由
 app.use(`/${config.name}/:version`,router);
 

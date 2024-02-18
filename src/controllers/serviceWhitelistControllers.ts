@@ -13,4 +13,8 @@ export class ServiceWhitelistControllers{
         const key = data.key;
         return KeyCommon.create(key);
     }
+    async getKey(host:string= UnitCommon.ThrowIfNullOrEmpty("host不能为空")):Promise<string|undefined>{
+      const data =await this.service.findByHost(host);
+      return data?.key;
+    }
 }
