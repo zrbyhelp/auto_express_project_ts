@@ -8,7 +8,6 @@ import router from "./router";
 import { versions } from "./version";
 import config from './config';
 import { sequelize } from "./config/database";
-import  expressWinston from './log';
 import {  ZrError, errorUse } from "./zrError";
 import { WebSocketServer } from "./web-socket";
 
