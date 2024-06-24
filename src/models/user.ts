@@ -21,12 +21,24 @@ User.init({
     // 在这里定义模型属性
     id: {
       type: DataTypes.UUID,
+      primaryKey:true,
       defaultValue: DataTypes.UUIDV4,
+    },
+    type:{
+      type: DataTypes.STRING,
+      defaultValue: 'default',
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [['admin', 'default']],
+          msg: "类型错误"
+        }
+      }
     },
     name: {
       type: DataTypes.STRING,
+      unique: true,
       allowNull: false,
-      primaryKey:true,
       validate: {
         isAlphanumeric:{
             msg:"只允许字母或数字"

@@ -7,8 +7,8 @@ class UserService{
      * @param password 密码6-32
      * @returns 
      */
-    async createUser(name: string, password: string): Promise<User> {
-        const user = await User.create({ name, password });
+    async createUser(name: string, password: string,type:string): Promise<User> {
+        const user = await User.create({ name, password ,type});
         return user;
     }
     async findByName(name:string): Promise<User|null> {

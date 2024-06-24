@@ -26,10 +26,12 @@ export class Jwt{
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) {
+      //没有token
       return res.status(401).json();
     }
     jwt.verify(token, Jwt.secret, (err, user) => {
       if (err) {
+        //token异常
         return res.status(403).json();
       }
       req.app.set("user",user);

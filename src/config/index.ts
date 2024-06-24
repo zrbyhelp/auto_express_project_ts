@@ -6,7 +6,7 @@ const configJson:ConfigJson = {
         username: "root",
         password: "MC+ywLivM4wg22k8GR6Niw==",
         database: "nodesever",
-        host: "192.168.1.90",
+        host: "127.0.0.1",
         dialect : "mysql",
         port:3306,
         logging: false

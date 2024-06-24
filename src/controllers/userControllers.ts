@@ -12,7 +12,7 @@ export class UserController {
    */
   async initCreateAdminUser(): Promise<void> {
     if(await this.userService.getCount()===0){
-      await this.userService.createUser( 'admin','123456');
+      await this.userService.createUser( 'admin','123456','admin');
     }
   }
   /**
