@@ -37,7 +37,6 @@ User.init({
     },
     name: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
       validate: {
         isAlphanumeric:{
@@ -58,7 +57,14 @@ User.init({
         },
     }
   }, {
-    sequelize
+    sequelize,
+    //唯一约束加在这里防止索引重复建立问题
+    indexes: [
+      {
+        unique: true,
+        fields: ['name'] 
+      }
+    ]
 });
  User.sync({ alter: true }).then(()=>{
   new UserController().initCreateAdminUser()
