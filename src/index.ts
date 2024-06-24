@@ -1,7 +1,7 @@
 //异部错误转同步
 require('express-async-errors');
 
-import * as Sentry from "@sentry/node";
+// import * as Sentry from "@sentry/node";
 import { ProfilingIntegration } from "@sentry/profiling-node";
 import express, { NextFunction ,Request ,Response} from "express";
 import router from "./router";
@@ -22,40 +22,40 @@ sequelize.sync({alter: true}).catch((error) => {
 
 const app = express();
 
-//注册哨兵
-Sentry.init({
-  dsn: config.sentryDsn,
-  //过滤上报的异常信息
-  ignoreErrors: [
-    "top.GLOBALS",
-    "originalCreateNotification",
-    "canvas.contentDocument",
-    "MyApp_RemoveAllHighlights",
-    "http://tt.epicplay.com",
-    "Can't find variable: ZiteReader",
-    "jigsaw is not defined",
-    "ComboSearch is not defined",
-    "http://loading.retry.widdit.com/",
-    "atomicFindClose",
-    "fb_xd_fragment",
-    "bmi_SafeAddOnload",
-    "EBCallBackMessageReceived",
-    "conduitPage",
-    ...ZrError.sendError
-  ],
-  integrations: [
-    new Sentry.Integrations.Http({ tracing: true }),
-    new Sentry.Integrations.Express({ app }),
-    new ProfilingIntegration(),
-  ],
-  tracesSampleRate: 1.0, 
-  profilesSampleRate: 1.0,
-});
+// //注册哨兵
+// Sentry.init({
+//   dsn: config.sentryDsn,
+//   //过滤上报的异常信息
+//   ignoreErrors: [
+//     "top.GLOBALS",
+//     "originalCreateNotification",
+//     "canvas.contentDocument",
+//     "MyApp_RemoveAllHighlights",
+//     "http://tt.epicplay.com",
+//     "Can't find variable: ZiteReader",
+//     "jigsaw is not defined",
+//     "ComboSearch is not defined",
+//     "http://loading.retry.widdit.com/",
+//     "atomicFindClose",
+//     "fb_xd_fragment",
+//     "bmi_SafeAddOnload",
+//     "EBCallBackMessageReceived",
+//     "conduitPage",
+//     ...ZrError.sendError
+//   ],
+//   integrations: [
+//     new Sentry.Integrations.Http({ tracing: true }),
+//     new Sentry.Integrations.Express({ app }),
+//     new ProfilingIntegration(),
+//   ],
+//   tracesSampleRate: 1.0, 
+//   profilesSampleRate: 1.0,
+// });
 
-//请求处理程序必须是应用程序上的第一个中间件
-app.use(Sentry.Handlers.requestHandler());
-//TracingHandler为每个传入请求创建跟踪
-app.use(Sentry.Handlers.tracingHandler());
+// //请求处理程序必须是应用程序上的第一个中间件
+// app.use(Sentry.Handlers.requestHandler());
+// //TracingHandler为每个传入请求创建跟踪
+// app.use(Sentry.Handlers.tracingHandler());
 //初始化json
 app.use(express.json());
 //注册WebSocket
@@ -75,8 +75,8 @@ app.use(`/${config.name}/:version`, (req, res, next) => {
 //路由
 app.use(`/${config.name}/:version`,router);
 
-//错误处理程序必须在任何其他错误中间件之前和所有控制器之后注册
-app.use(Sentry.Handlers.errorHandler());
+// //错误处理程序必须在任何其他错误中间件之前和所有控制器之后注册
+// app.use(Sentry.Handlers.errorHandler());
 //错误处理中间件
 app.use(errorUse);
 
